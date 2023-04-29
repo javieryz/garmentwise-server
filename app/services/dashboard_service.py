@@ -1,5 +1,6 @@
 from base64 import b64encode
 from datetime import datetime
+import json
 from schemas.user import User
 from schemas.report_group import ReportGroup
 from schemas.review import Review
@@ -65,7 +66,7 @@ def get_reports_by_collection(report_group_id: int, db: SessionLocal):
   return reports
 
 def get_report(report_id: int, db: SessionLocal):
-  report = db.query(Report).options(defer(Report.wordcloud)).filter_by(id=report_id).first()
+  report = db.query(Report).options(defer(Report.wordcloud), defer(Report.word_count)).filter_by(id=report_id).first()
   return report
 
 def get_reports_info_by_user(user_id: int, db: SessionLocal):
@@ -85,6 +86,13 @@ def get_reviews(report_id: int, offset: int, limit: int, db: SessionLocal):
     .all()
   )
   return reviews
+
+def get_word_count(report_id: int, db: SessionLocal):
+  report = db.query(Report).filter_by(id=report_id).first()
+  if report is None:
+    return {'error': f'Report with id={report_id} not found'}
+  word_count = json.loads(report.word_count)
+  return {'word_count': word_count}
 
 def get_wordcloud(report_id: int, db: SessionLocal):
   report = db.query(Report).filter_by(id=report_id).first()

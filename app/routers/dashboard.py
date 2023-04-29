@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 from typing import Annotated
 from fastapi import APIRouter, Depends, Form, HTTPException, Query, Request, UploadFile
 from database.database import get_db
@@ -45,7 +46,7 @@ async def create_report(report_name: Annotated[str, Form()],
   if int(collection_id) not in ids:
     raise HTTPException(status_code=403, detail="Unauthorized to create a report in this collection.")
     
-  results, metadata, reviews, wordcloud = engine.predict(file)
+  results, metadata, reviews, word_count, wordcloud = engine.predict(file)
 
   report_data = {
       "title": report_name,
@@ -54,6 +55,7 @@ async def create_report(report_name: Annotated[str, Form()],
       "date": datetime.now(),
       **results['scores'],
       **results['number_of_reviews'],
+      "word_count": json.dumps(word_count),
       "wordcloud": wordcloud,
   }
     
@@ -110,6 +112,16 @@ async def get_reviews(report_id: int,
   limit = reviews_per_page
   reviews = dashboard.get_reviews(report_id=report_id, offset=offset, limit=limit, db=db)
   return reviews
+
+@router.get("/reports/{report_id}/word_count", tags=["Dashboard"])
+async def get_word_count(report_id: int, current_user: User=Depends(get_current_user), db: SessionLocal=Depends(get_db)):
+  report = dashboard.get_report(report_id=report_id, db=db)
+
+  if report.user_id != current_user.id:
+    raise HTTPException(status_code=403, detail="Unauthorized to get this report's word count.")
+  
+  wordcloud = dashboard.get_word_count(report_id=report_id, db=db)
+  return wordcloud
 
 @router.get("/reports/{report_id}/wordcloud", tags=["Dashboard"])
 async def get_wordcloud(report_id: int, current_user: User=Depends(get_current_user), db: SessionLocal=Depends(get_db)):

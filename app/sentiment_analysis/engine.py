@@ -1,3 +1,4 @@
+from collections import Counter
 import nltk
 import re
 import string
@@ -63,11 +64,27 @@ def generate_score(df_original, df_specific, model, vectorizer, prediction_type)
   df_original.loc[:, prediction_type] = df_specific.loc[:, prediction_type]
   return score
 
+def generate_word_count(df: pd.DataFrame):
+  text = ' '.join(df['reviewTextPreprocessed'])
+  word_count = Counter(text.split())
+  word_count = word_count.most_common(50)
+  word_count = {word: {'count': count} for word, count in word_count}
+  return word_count
+
+def generate_category_word_count(df: pd.DataFrame, filter_list_1, filter_list_2):
+  text = ' '.join(df['reviewTextPreprocessed'])
+  word_count = Counter(text.split())
+  
+  word_count = word_count.most_common(30)
+  word_count = {word: {'count': count} for word, count in word_count}
+  return word_count
+
 def generate_wordcloud(df: pd.DataFrame):
   """
     Generates the wordcloud
   """
   text = ' '.join(df['reviewTextPreprocessed'])
+
   wordcloud = WordCloud(background_color='white', width=800, height=400, max_words=200, stopwords=stopwords_list, colormap='inferno').generate(text)
   plt.imshow(wordcloud, interpolation='bilinear')
   plt.axis('off')
@@ -98,6 +115,8 @@ def predict(file: UploadFile):
   fit_score = generate_score(df, fit_df, model_fit, tfidf_fit, 'fit')
   color_score = generate_score(df, color_df, model_color, cv_color, 'color')
   quality_score = generate_score(df, quality_df, model_quality, tfidf_quality, 'quality')
+
+  word_count = generate_word_count(df)
   
   predictions = {
     "scores": {
@@ -121,4 +140,4 @@ def predict(file: UploadFile):
   df = df.fillna(value=-1)
   reviews_list = df.to_dict(orient='records')
 
-  return predictions, report_metadata, reviews_list, wordcloud
+  return predictions, report_metadata, reviews_list, word_count, wordcloud
