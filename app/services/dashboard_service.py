@@ -57,6 +57,10 @@ def save_review_categories(reviews_categories_list: list, db: SessionLocal):
       db.execute(review_categories.insert().values(review_id=review_category['review_id'], category_id=category))
       db.commit()
 
+def get_collection(collection_id: int, db: SessionLocal):
+  collection = db.query(ReportGroup).filter_by(id=collection_id).first()
+  return collection
+
 def get_collections_by_user(user_id: int, db: SessionLocal):
   collections = db.query(ReportGroup).filter_by(user_id=user_id).all()
   return collections

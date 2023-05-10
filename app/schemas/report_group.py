@@ -1,7 +1,6 @@
-from sqlalchemy import Column, Float, ForeignKey, Integer, LargeBinary, String
-from schemas.dataset import Dataset
+from sqlalchemy import Column, ForeignKey, Integer, String
 from database.database import Base
-from sqlalchemy.orm import relationship, Session
+from sqlalchemy.orm import relationship
 from pydantic import BaseModel
 
 class ReportGroup(Base):

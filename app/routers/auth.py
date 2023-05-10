@@ -10,27 +10,7 @@ from services.auth_service import user_exists, authenticate_user, create_access_
 
 router = APIRouter()
 
-@router.post(
-  "/login", 
-  tags=["Authentication"],
-  summary="Authenticates the user",
-  description=  "Authenticates the user login using OAuth2 password grant type.\
-                If successful, generates a Bearer token valid for 2 hours.",
-  response_description="Bearer token",
-  responses={
-    200: {
-      "content": {
-        "application/json": {
-          "example": {
-            "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqeXoxQGdtYWlsLmNvbSIsImV4cCI6MTY4MjUyMzYwOH0.YJWVZrk5yGgMXjqVlCVWhG-nJY3thdZUXv-KtPzBUb4",
-            "token_type": "Bearer",
-            "expires_at": "2023-01-1T12:40:08.146917"
-          }
-        }
-      }
-    }
-  }
-)
+@router.post("/login", tags=["Authentication"])
 async def login(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
   user = authenticate_user(email=form_data.username, password=form_data.password)
   if not user:
@@ -54,7 +34,7 @@ async def login(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestF
 
 @router.post("/signup", tags=["Authentication"])
 async def signup(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
-  if user_exists:
+  if user_exists(email=form_data.username, db=db):
     raise HTTPException(status_code=400, detail="Email address is already registered")
 
   user = User.create(db, email=form_data.username, password=form_data.password)

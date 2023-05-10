@@ -24,6 +24,12 @@ async def create_collection(request: Request, current_user: User = Depends(get_c
   collection = dashboard.save_collection(collection_name=collection_name, user=current_user, db=db)
   return collection
 
+@router.get("/collections/{collection_id}", tags=["Dashboard"])
+async def get_collection(collection_id: int, current_user: User = Depends(get_current_user), db: SessionLocal = Depends(get_db)):
+  user_id = current_user.id
+  collections = dashboard.get_collection(collection_id=collection_id, db=db)
+  return collections
+
 @router.get("/collections/{collection_id}/reports", tags=["Dashboard"])
 async def get_reports_by_collection(collection_id: int, current_user: User = Depends(get_current_user), db: SessionLocal = Depends(get_db)):
   collections = dashboard.get_collections_by_user(user_id=current_user.id, db=db)

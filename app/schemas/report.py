@@ -1,4 +1,3 @@
-from typing import List, Tuple
 from datetime import date
 from sqlalchemy import Date, Column, Float, ForeignKey, Integer, LargeBinary, String
 from schemas.dataset import Dataset

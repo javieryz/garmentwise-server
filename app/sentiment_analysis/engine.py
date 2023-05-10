@@ -1,5 +1,4 @@
 from collections import Counter
-import nltk
 import re
 import string
 import numpy as np
@@ -96,6 +95,7 @@ def generate_wordcloud(df: pd.DataFrame):
     
 def predict(file: UploadFile):
   df = pd.read_csv(file.file)
+  df.rename(columns={0: 'reviewText'})
   df['reviewText'] = df['reviewText'].fillna('')
   df['reviewTextPreprocessed'] = df['reviewText'].apply(clean_review)
   df['category'] = df['reviewTextPreprocessed'].apply(classify_review)

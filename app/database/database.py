@@ -20,11 +20,11 @@ Base = declarative_base()
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def init_db():
-    Base.metadata.create_all(engine)
+  Base.metadata.create_all(engine)
 
 def get_db():
-    try:
-        db = SessionLocal()
-        yield db
-    finally:
-        db.close()
+  try:
+    db = SessionLocal()
+    yield db
+  finally:
+    db.close()

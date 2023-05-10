@@ -12,8 +12,7 @@ app.include_router(auth.router, prefix="/auth")
 app.include_router(dashboard.router, prefix="/dashboard")
 
 origins = [
-    "http://localhost:4200",
-    "http://garmentwise-angular",
+    "http://localhost:4200"
 ]
 
 app.add_middleware(
