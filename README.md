@@ -1,7 +1,7 @@
 # Garmentwise
 ## Proyecto de Fin de Grado
 
-### Instrucciones
+### Instrucciones de instalación
 Requisitos previos:
 - Tener `pip` y `Python 3.9.13` instalados.
 
@@ -14,3 +14,8 @@ Requisitos previos:
   ```
   uvicorn main:app --reload
   ```
+
+### Uso de la aplicación
+En este repositorio se pone a disposición un conjunto de datos de muestra en el directorio `/datasets`. Alternativamente, puede probar la aplicación con la siguiente cuenta, que ya contiene informes creados:
+- email: jyz2@gmail.com
+- password: javieryz
